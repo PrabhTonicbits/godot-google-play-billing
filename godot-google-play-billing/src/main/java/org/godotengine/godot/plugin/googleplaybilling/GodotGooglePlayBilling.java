@@ -216,14 +216,14 @@ public class GodotGooglePlayBilling extends GodotPlugin implements PurchasesUpda
 	@UsedByGodot
 	public Dictionary purchase(String sku) {
 		return purchaseInternal("", sku, 
-			BillingFlowParams.ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+			BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE);
 	}
 	@UsedByGodot
-	public Dictionary updateSubscription(String oldToken, String sku, int prorationMode) {
-		return purchaseInternal(oldToken, sku, prorationMode);
+	public Dictionary updateSubscription(String oldToken, String sku, int replacementMode) {
+		return purchaseInternal(oldToken, sku, replacementMode);
 	}
 
-	private Dictionary purchaseInternal(String oldToken, String sku, int prorationMode) {
+	private Dictionary purchaseInternal(String oldToken, String sku, int replacementMode) {
 		if (!skuDetailsCache.containsKey(sku)) {
 			Dictionary returnValue = new Dictionary();
 			returnValue.put("status", 1); // FAILED = 1
@@ -241,11 +241,11 @@ public class GodotGooglePlayBilling extends GodotPlugin implements PurchasesUpda
 		if (!obfuscatedProfileId.isEmpty()) {
 			purchaseParamsBuilder.setObfuscatedProfileId(obfuscatedProfileId);
 		}
-		if (!oldToken.isEmpty() && prorationMode != BillingFlowParams.ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+		if (!oldToken.isEmpty() && replacementMode != BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE) {
 			BillingFlowParams.SubscriptionUpdateParams updateParams =
 				BillingFlowParams.SubscriptionUpdateParams.newBuilder()
-					.setOldSkuPurchaseToken(oldToken)
-					.setReplaceSkusProrationMode(prorationMode)
+					.setOldPurchaseToken(oldToken)
+					.setSubscriptionReplacementMode(replacementMode)
 					.build();
 			purchaseParamsBuilder.setSubscriptionUpdateParams(updateParams);
 		}
